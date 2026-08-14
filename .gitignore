@@ -54,10 +54,6 @@ results/hive_output/*
 !results/mapreduce_output/.gitkeep
 !results/hive_output/.gitkeep
 
-data/processed/*
-
-!data/processed/.gitkeep
-
 *.parquet
 *.avro
 *.orc
