@@ -24,60 +24,18 @@ This directory contains the HiveQL DDL scripts and analytical queries for **Memb
 
 ---
 
-## 2. Reproduction Instructions
+## 2. Execution
 
-### Step 1: Start Docker Services
+The full step-by-step instructions to spin up the cluster, upload the dataset to HDFS, and execute Hive are documented in the root [README.md](../README.md#step-3-run-apache-hive-analytics-pipeline).
 
-Ensure Docker Desktop is running and start the Hadoop/Hive stack:
-
-```bash
-docker compose up -d
-```
-
-Verify that all services (`namenode`, `datanode`, `resourcemanager`, `nodemanager`, `hive-server`) are running:
+**Quick Command:**
 
 ```bash
-docker compose ps
-```
-
-### Step 2: Upload Cleaned Dataset to HDFS
-
-Create the target HDFS directory and upload `orders_clean.csv`:
-
-```bash
-# Create directory in HDFS
-docker exec -it namenode hdfs dfs -mkdir -p /user/bda/food_delivery/clean/
-
-# Copy cleaned dataset into NameNode container and upload to HDFS
-docker cp data/processed/orders_clean.csv namenode:/tmp/orders_clean.csv
-docker exec -it namenode hdfs dfs -put -f /tmp/orders_clean.csv /user/bda/food_delivery/clean/
-
-# Verify file presence in HDFS
-docker exec -it namenode hdfs dfs -ls /user/bda/food_delivery/clean/
-```
-
-### Step 3: Run Hive Setup and Queries (All-in-One)
-
-Copy `hive/setup_and_run_hive.sql` into the `hive-server` container and execute it directly via the Hive CLI:
-
-```bash
-# 1. Copy the SQL file into the container
+# 1. Copy SQL file to container
 docker cp hive/setup_and_run_hive.sql hive-server:/tmp/setup_and_run_hive.sql
 
-# 2. Execute the script in Hive
+# 2. Run Hive pipeline (Setup + 12 Queries)
 docker exec -it hive-server hive -f /tmp/setup_and_run_hive.sql
-```
-
-### Step 4: Save Query Results to Output File
-
-To run the pipeline and save output to `results/hive_output/all_queries.txt`:
-
-```bash
-# Ensure results directory exists
-mkdir -p results/hive_output
-
-# Execute queries and redirect output
-docker exec -i hive-server hive -f /tmp/setup_and_run_hive.sql > results/hive_output/all_queries.txt
 ```
 
 ---
