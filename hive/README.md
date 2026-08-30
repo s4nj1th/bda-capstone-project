@@ -18,7 +18,7 @@ This directory contains the HiveQL DDL scripts and analytical queries for **Memb
                    ▼ (CTAS with CAST & ORC format)
 [Hive Managed Table: orders (ORC Columnar Format)]
                    │
-                   ▼ (Beeline / HiveQL)
+                   ▼ (Hive CLI / HiveQL)
 [12 Analytical Queries → results/hive_output/all_queries.txt]
 ```
 
@@ -37,7 +37,7 @@ docker compose up -d
 Verify that all services (`namenode`, `datanode`, `resourcemanager`, `nodemanager`, `hive-server`) are running:
 
 ```bash
-docker ps
+docker compose ps
 ```
 
 ### Step 2: Upload Cleaned Dataset to HDFS
@@ -46,41 +46,38 @@ Create the target HDFS directory and upload `orders_clean.csv`:
 
 ```bash
 # Create directory in HDFS
-docker exec -it $(docker ps -qf "name=namenode") hdfs dfs -mkdir -p /user/bda/food_delivery/clean/
+docker exec -it namenode hdfs dfs -mkdir -p /user/bda/food_delivery/clean/
 
 # Copy cleaned dataset into NameNode container and upload to HDFS
-docker cp data/processed/orders_clean.csv $(docker ps -qf "name=namenode"):/tmp/orders_clean.csv
-docker exec -it $(docker ps -qf "name=namenode") hdfs dfs -put -f /tmp/orders_clean.csv /user/bda/food_delivery/clean/
+docker cp data/processed/orders_clean.csv namenode:/tmp/orders_clean.csv
+docker exec -it namenode hdfs dfs -put -f /tmp/orders_clean.csv /user/bda/food_delivery/clean/
 
 # Verify file presence in HDFS
-docker exec -it $(docker ps -qf "name=namenode") hdfs dfs -ls /user/bda/food_delivery/clean/
+docker exec -it namenode hdfs dfs -ls /user/bda/food_delivery/clean/
 ```
 
-### Step 3: Create Hive Database and Tables
+### Step 3: Run Hive Setup and Queries (All-in-One)
 
-Copy `hive/create_table.hql` into the `hive-server` container and execute it via Beeline:
+Copy `hive/setup_and_run_hive.sql` into the `hive-server` container and execute it directly via the Hive CLI:
 
 ```bash
-# Copy script into container
-docker cp hive/create_table.hql $(docker ps -qf "name=hive-server"):/tmp/create_table.hql
+# 1. Copy the SQL file into the container
+docker cp hive/setup_and_run_hive.sql hive-server:/tmp/setup_and_run_hive.sql
 
-# Execute DDL to create database and tables
-docker exec -i $(docker ps -qf "name=hive-server") beeline -u jdbc:hive2://localhost:10000 -f /tmp/create_table.hql
+# 2. Execute the script in Hive
+docker exec -it hive-server hive -f /tmp/setup_and_run_hive.sql
 ```
 
-### Step 4: Run the 12 Analytical Queries
+### Step 4: Save Query Results to Output File
 
-Execute `hive/queries.hql` and save the outputs to `results/hive_output/all_queries.txt`:
+To run the pipeline and save output to `results/hive_output/all_queries.txt`:
 
 ```bash
 # Ensure results directory exists
 mkdir -p results/hive_output
 
-# Copy script into container
-docker cp hive/queries.hql $(docker ps -qf "name=hive-server"):/tmp/queries.hql
-
 # Execute queries and redirect output
-docker exec -i $(docker ps -qf "name=hive-server") beeline -u jdbc:hive2://localhost:10000 -f /tmp/queries.hql > results/hive_output/all_queries.txt
+docker exec -i hive-server hive -f /tmp/setup_and_run_hive.sql > results/hive_output/all_queries.txt
 ```
 
 ---
