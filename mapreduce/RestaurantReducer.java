@@ -49,8 +49,10 @@ public class RestaurantReducer
             // Total revenue
             if (!fields[2].isEmpty()) {
                 try {
-                    totalRevenue +=
-                            Double.parseDouble(fields[2]);
+                    double val = Double.parseDouble(fields[2]);
+                    if (Double.isFinite(val)) {
+                        totalRevenue += val;
+                    }
                 } catch (NumberFormatException e) {
                     // Ignore invalid total
                 }
@@ -59,9 +61,11 @@ public class RestaurantReducer
             // KPT
             if (!fields[3].isEmpty()) {
                 try {
-                    kptSum +=
-                            Double.parseDouble(fields[3]);
-                    kptCount++;
+                    double val = Double.parseDouble(fields[3]);
+                    if (Double.isFinite(val) && val >= 0) {
+                        kptSum += val;
+                        kptCount++;
+                    }
                 } catch (NumberFormatException e) {
                     // Ignore invalid KPT
                 }
@@ -70,9 +74,11 @@ public class RestaurantReducer
             // Rider wait
             if (!fields[4].isEmpty()) {
                 try {
-                    riderWaitSum +=
-                            Double.parseDouble(fields[4]);
-                    riderWaitCount++;
+                    double val = Double.parseDouble(fields[4]);
+                    if (Double.isFinite(val) && val >= 0) {
+                        riderWaitSum += val;
+                        riderWaitCount++;
+                    }
                 } catch (NumberFormatException e) {
                     // Ignore invalid rider wait
                 }

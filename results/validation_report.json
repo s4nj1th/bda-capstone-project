@@ -1,0 +1,47 @@
+{
+  "status": "SUCCESS",
+  "metrics_validation": [
+    {
+      "restaurant_name": "Aura Pizzas",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0004,
+      "wait_diff_minutes": 0.0018
+    },
+    {
+      "restaurant_name": "Dilli Burger Adda",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0031,
+      "wait_diff_minutes": 0.0015
+    },
+    {
+      "restaurant_name": "Masala Junction",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0038,
+      "wait_diff_minutes": 0.0031
+    },
+    {
+      "restaurant_name": "Swaad",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0019,
+      "wait_diff_minutes": 0.0014
+    },
+    {
+      "restaurant_name": "Tandoori Junction",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0024,
+      "wait_diff_minutes": 0.0024
+    },
+    {
+      "restaurant_name": "The Chicken Junction",
+      "count_match": true,
+      "revenue_diff_pct": 0.0,
+      "kpt_diff_minutes": 0.0016,
+      "wait_diff_minutes": 0.0038
+    }
+  ]
+}
