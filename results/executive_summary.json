@@ -1,0 +1,15 @@
+{
+  "total_restaurants": 6,
+  "total_orders": 21321,
+  "total_platform_revenue": 14554058.139999999,
+  "avg_platform_order_value": 682.62,
+  "bottleneck_restaurants": [
+    "Dilli Burger Adda",
+    "Tandoori Junction"
+  ],
+  "growth_opportunity_restaurants": [
+    "Masala Junction",
+    "Tandoori Junction",
+    "The Chicken Junction"
+  ]
+}
