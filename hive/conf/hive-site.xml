@@ -1,23 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property>
-        <name>fs.defaultFS</name>
-        <value>hdfs://namenode:8020</value>
-    </property>
+
+    <!--
+        Hive Metastore URI.
+        The hive-server container runs the Metastore service on port 9083.
+        The hive CLI (run via docker exec) connects to it on localhost:9083.
+    -->
     <property>
         <name>hive.metastore.uris</name>
         <value>thrift://localhost:9083</value>
     </property>
+
+    <!--
+        Use MapReduce as execution engine (not Tez, not Spark).
+    -->
     <property>
         <name>hive.execution.engine</name>
         <value>mr</value>
     </property>
+
+    <!--
+        HiveServer2 impersonation disabled (simpler for dev/capstone).
+    -->
     <property>
         <name>hive.server2.enable.doAs</name>
         <value>false</value>
     </property>
+
+    <!--
+        Managed table warehouse directory on HDFS.
+        The ORC managed table (orders) will be stored here.
+    -->
     <property>
-        <name>metastore.warehouse.dir</name>
-        <value>/user/hive/warehouse</value>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>hdfs://namenode:8020/user/hive/warehouse</value>
     </property>
+
+    <!--
+        Disable automatic stats gathering to avoid extra MR jobs being
+        submitted during CTAS / INSERT operations.
+    -->
+    <property>
+        <name>hive.stats.autogather</name>
+        <value>false</value>
+    </property>
+
+    <!--
+        Scratch directory on HDFS for Hive intermediate results.
+    -->
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>hdfs://namenode:8020/tmp/hive</value>
+    </property>
+
+    <!--
+        Write all output to console (useful when capturing via redirect).
+    -->
+    <property>
+        <name>hive.cli.print.header</name>
+        <value>true</value>
+    </property>
+
 </configuration>

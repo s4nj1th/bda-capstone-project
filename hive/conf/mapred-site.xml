@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<configuration>
+
+    <!--
+        mapreduce.framework.name=local:
+        Hive 3.1.3 bundles Hadoop 3.1.0 (unshaded protobuf 2.5.0).
+        Hadoop 3.3.6 YARN cluster uses shaded protobuf 3.x.
+        Submitting Hive MR jobs to YARN causes:
+          ClassCastException: GetFileInfoRequestProto cannot be cast to
+          com.google.protobuf.Message (ProtobufRpcEngine vs ProtobufRpcEngine2 mismatch).
+        Setting local mode lets Hive run MapReduce tasks inside its own JVM,
+        reading from and writing to HDFS — without a YARN submission.
+        YARN is already demonstrated by the Java MapReduce job (SUCCEEDED).
+    -->
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>local</value>
+    </property>
+
+    <!--
+        ─────────────────────────────────────────────────────────────────
+        ROOT CAUSE FIX — MRAppMaster classpath
+        ─────────────────────────────────────────────────────────────────
+        apache/hive:3.1.3 ships with Hadoop 3.1.0 at /opt/hadoop.
+        The YARN cluster (apache/hadoop:3.3.6) has Hadoop 3.3.6 at /opt/hadoop.
+
+        Without this property, the MR client (Hive, using Hadoop 3.1.0 code)
+        computes the AM classpath from its LOCAL Hadoop 3.1.0 installation.
+        YARN then distributes those 3.1.0 JARs to the AM container, causing
+        a version mismatch with the 3.3.6 cluster → "Could not find or load
+        main class org.apache.hadoop.mapreduce.v2.app.MRAppMaster"
+
+        By setting this property explicitly, the AM container (running on the
+        NodeManager which has 3.3.6 at /opt/hadoop) uses the 3.3.6 JARs from
+        its LOCAL filesystem — no Hive-distributed 3.1.0 JARs involved.
+        ─────────────────────────────────────────────────────────────────
+    -->
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
+
+    <!--
+        Set HADOOP_MAPRED_HOME inside the AM / mapper / reducer containers.
+        On YARN nodes (apache/hadoop:3.3.6), /opt/hadoop IS Hadoop 3.3.6.
+    -->
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+
+</configuration>

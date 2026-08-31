@@ -6,8 +6,8 @@ services:
         container_name: namenode
         command: ["hdfs", "namenode"]
         ports:
-            - "9870:9870" # NameNode Web UI
-            - "8020:8020" # HDFS RPC
+            - "9870:9870"   # NameNode Web UI
+            - "8020:8020"   # HDFS RPC
         env_file: ./hadoop.env
         environment:
             - ENSURE_NAMENODE_DIR=/data/name/current
@@ -33,7 +33,7 @@ services:
         container_name: resourcemanager
         command: ["yarn", "resourcemanager"]
         ports:
-            - "8088:8088" # YARN Web UI
+            - "8088:8088"   # YARN ResourceManager Web UI
         env_file: ./hadoop.env
         depends_on:
             - namenode
@@ -58,15 +58,22 @@ services:
         depends_on:
             - namenode
             - datanode
+            - resourcemanager
+            - nodemanager
         environment:
             SERVICE_NAME: metastore
             IS_RESUME: "false"
-            HADOOP_CLASSPATH: "/opt/tez/*:/opt/tez/lib/*:"
         volumes:
             - ./hive/conf/hive-site.xml:/opt/hive/conf/hive-site.xml
+            - ./hive/conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+            - ./hive/conf/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+            - ./hive/conf/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+            - ./hive/conf/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+            # Mount the combined setup+query SQL file for execution
+            - ./hive/setup_and_run_hive.sql:/tmp/setup_and_run_hive.sql
         ports:
-            - "9083:9083" # Hive Metastore Thrift
-            - "10000:10000" # HiveServer2 JDBC/CLI
+            - "9083:9083"   # Hive Metastore Thrift
+            - "10000:10000" # HiveServer2 JDBC/CLI (if needed)
             - "10002:10002" # Hive Web UI
 
 volumes:

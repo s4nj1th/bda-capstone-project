@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bda.capstone</groupId>
+    <artifactId>restaurant-analysis</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>BDA Capstone — Restaurant Operational Performance MapReduce</name>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Must match the apache/hadoop:3.3.6 cluster version -->
+        <hadoop.version>3.3.6</hadoop.version>
+    </properties>
+
+    <dependencies>
+        <!--
+            Hadoop MapReduce client — provided scope because the JARs are
+            available on the YARN cluster at runtime (/opt/hadoop/...).
+            Only needed at compile time.
+        -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!--
+            Java source files live in mapreduce/ directly (not under src/main/java).
+            This matches the existing project structure.
+        -->
+        <sourceDirectory>.</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                    <!-- Only compile the project's own Java files -->
+                    <includes>
+                        <include>RestaurantDriver.java</include>
+                        <include>RestaurantMapper.java</include>
+                        <include>RestaurantReducer.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <finalName>restaurant-analysis</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>RestaurantDriver</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
