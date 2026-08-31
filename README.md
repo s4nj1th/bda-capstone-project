@@ -21,11 +21,12 @@ The cluster is orchestrated using Docker Compose (`docker-compose.yml`):
 ## ⚙️ Prerequisites & Mac / Apple Silicon Setup
 
 If running on Apple Silicon (M1 / M2 / M3 / M4 Macs):
+
 1. In **Docker Desktop -> Settings -> Resources**:
-   - Allocate at least **6 GB – 8 GB** of Memory.
-   - Allocate at least **4 CPUs**.
+    - Allocate at least **6 GB – 8 GB** of Memory.
+    - Allocate at least **4 CPUs**.
 2. In **Docker Desktop -> Settings -> General** (or Features in Development):
-   - Check **"Use Rosetta for x86/amd64 emulation on Apple Silicon"** for optimal x86 container performance and stability.
+    - Check **"Use Rosetta for x86/amd64 emulation on Apple Silicon"** for optimal x86 container performance and stability.
 3. Click **Apply & restart**.
 
 ---
@@ -88,21 +89,25 @@ docker exec -i hive-server hive -f /tmp/setup_and_run_hive.sql > results/hive_ou
 ### Step 4: Verify Databases & Tables in Hive
 
 #### Option A: Interactive Hive Shell
+
 ```bash
 docker exec -it hive-server hive
 ```
+
 Inside the `hive>` prompt:
+
 ```sql
 SHOW DATABASES;
 USE food_delivery;
 SHOW TABLES;
-DESCRIBE orders;
-SELECT order_id, restaurant_name, total, rating, order_status FROM orders LIMIT 5;
-SELECT COUNT(*) FROM orders;
+DESCRIBE orders_raw_text;
+SELECT order_id, restaurant_name, total, rating, order_status FROM orders_raw_text LIMIT 5;
+SELECT COUNT(*) FROM orders_raw_text;
 EXIT;
 ```
 
 #### Option B: One-Line CLI Commands
+
 ```bash
 # Show databases
 docker exec -i hive-server hive -e "SHOW DATABASES;"
@@ -111,7 +116,7 @@ docker exec -i hive-server hive -e "SHOW DATABASES;"
 docker exec -i hive-server hive -e "USE food_delivery; SHOW TABLES;"
 
 # Preview rows
-docker exec -i hive-server hive -e "USE food_delivery; SELECT order_id, restaurant_name, total, rating FROM orders LIMIT 5;"
+docker exec -i hive-server hive -e "USE food_delivery; SELECT order_id, restaurant_name, total, rating FROM orders_raw_text LIMIT 5;"
 ```
 
 ---
